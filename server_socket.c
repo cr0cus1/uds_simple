@@ -11,9 +11,11 @@ struct sockaddr_un server_addr;
 
 int create_server_socket() {
     int ret;
+    int msg;
     int server_fd;
     int client_fd;
-    char buffer[255];
+    char client_buffer[255];
+    char server_buffer[255];
 
     if((server_fd = socket(AF_UNIX, SOCK_STREAM, 0)) != -1) {
         puts("Server socket was created...");
@@ -35,19 +37,28 @@ int create_server_socket() {
         puts("Listening...");
         socklen_t peer_addr_size;
         peer_addr_size = sizeof(server_addr);
-        int msg;
-        while(1) {
-            client_fd = accept(server_fd, (struct sockaddr *) &server_addr, &peer_addr_size);
-            if(ret == -1)
-                perror("accept failed");
 
-            msg = read(client_fd, buffer, 255);
+        client_fd = accept(server_fd, (struct sockaddr *) &server_addr, &peer_addr_size);
+        if(client_fd == -1) {
+            perror("accept failed");
+            return 1;
+        }
+        puts("Connected to the client!");
+
+        while(1) {
+            memset(client_buffer, 0, sizeof(client_buffer));
+            msg = read(client_fd, client_buffer, 255);
             if(msg == -1)
                 perror("msg failed");
             
-            printf("%s \n", buffer);
+            printf("client: %s \n", client_buffer);
 
-            puts("Connected to the client!");
+            printf("root > ");
+            fgets(server_buffer, sizeof(server_buffer)+1, stdin);
+
+            if(write(server_fd, server_buffer, strlen(server_buffer)) == -1)
+                perror("send failed");
+            printf("\n");
         }
         close(server_fd);
     }
