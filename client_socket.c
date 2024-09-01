@@ -8,7 +8,7 @@
 struct sockaddr_un client_addr;
 
 int create_client_socket() {
-    char msg[30];
+    char msg[256];
     int client_fd, ret;
 
     if((client_fd = socket(AF_UNIX, SOCK_STREAM, 0)) != -1) {
@@ -18,19 +18,23 @@ int create_client_socket() {
     client_addr.sun_family = AF_UNIX;
     strcpy(client_addr.sun_path, SOCKET_PATH);
 
+    strcpy(msg, "hello world from client!");
+
     ret = connect(client_fd, (struct sockaddr *) &client_addr, sizeof(struct sockaddr_un));
     if(ret == -1)
         perror("connection failed");
+    else {
+        puts("Connected!");
+        if(write(client_fd, msg, strlen(msg)) == -1)
+            perror("send failed");
 
-    strcpy(msg, "hello from client!");
-    if(write(client_fd, msg, strlen(msg)+1, 0) == -1)
-        perror("send failed");
+        printf("%s \n", msg);
     }
-    
 
-    else
-        perror("socket creating");
+
+
     return 0;
+    }
 }
 
 int main(int argc, char **argv) {
