@@ -45,13 +45,11 @@ int create_server_socket() {
         }
         puts("Connected to the client!");
 
-        while(1) {
-            ret = read(client_fd, client_buffer, sizeof(client_buffer));
+        while(read(client_fd, client_buffer, sizeof(client_buffer)) != -1) {
             if (ret == -1)
                 perror("read failed");
 
             printf("user1: %s \n", client_buffer);
-//            memset(client_buffer, 0, sizeof(client_buffer));
             printf("you: ");
 
            fgets(server_buffer, sizeof(server_buffer), stdin);
