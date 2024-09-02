@@ -46,25 +46,24 @@ int create_server_socket() {
         puts("Connected to the client!");
 
         while(1) {
-            memset(client_buffer, 0, sizeof(client_buffer));
-            msg = read(client_fd, client_buffer, 255);
-            if(msg == -1)
-                perror("msg failed");
-            
-            printf("client: %s \n", client_buffer);
+            ret = read(client_fd, client_buffer, sizeof(client_buffer));
+            if (ret == -1)
+                perror("read failed");
 
-            printf("root > ");
-            fgets(server_buffer, sizeof(server_buffer)+1, stdin);
+            printf("user1: %s \n", client_buffer);
+//            memset(client_buffer, 0, sizeof(client_buffer));
+            printf("you: ");
 
-            if(write(server_fd, server_buffer, strlen(server_buffer)) == -1)
-                perror("send failed");
-            printf("\n");
+           fgets(server_buffer, sizeof(server_buffer), stdin);
+           if(write(client_fd, server_buffer, strlen(server_buffer)) == -1)
+               perror("send failed");
         }
-        close(server_fd);
+
     }
     else
         perror("socket creating");
 
+    close(server_fd);
     return 0;
     
 }
