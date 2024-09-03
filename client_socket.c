@@ -35,12 +35,6 @@ int create_client_socket() {
             printf("\n");
             printf("> ");
             memset(client_input, 0, sizeof(client_input));
-
-            if(read(client_fd, server_buff, sizeof(server_buff)) == -1)
-                perror("read from server failed");
-
-            printf("server: %s \n", server_buff);
-            printf("> ");
         }
 
     }

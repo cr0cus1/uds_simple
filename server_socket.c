@@ -16,10 +16,10 @@ int create_server_socket() {
     int client_fd;
     char client_buffer[255];
     char server_buffer[255];
+    unlink(SOCKET_PATH);
 
     if((server_fd = socket(AF_UNIX, SOCK_STREAM, 0)) != -1) {
         puts("Server socket was created...");
-        unlink(SOCKET_PATH);
         //socket's address details
         memset(&server_addr, 0, sizeof(server_addr));
         server_addr.sun_family = AF_UNIX;
@@ -45,16 +45,16 @@ int create_server_socket() {
         }
         puts("Connected to the client!");
 
-        while(read(client_fd, client_buffer, sizeof(client_buffer)) != -1) {
-            if (ret == -1)
-                perror("read failed");
+        while(read(client_fd, server_buffer, sizeof(server_buffer)) > 0) {
+            int first_digit = server_buffer[0] - '0';
+            int second_digit = server_buffer[2] - '0';
 
-            printf("user1: %s \n", client_buffer);
-            printf("you: ");
+            if(server_buffer[1] == '-') 
+                printf("%d \n", first_digit-second_digit);
+            else if(server_buffer[1] == '+') 
+                printf("%d \n", first_digit+second_digit);
 
-           fgets(server_buffer, sizeof(server_buffer), stdin);
-           if(write(client_fd, server_buffer, strlen(server_buffer)) == -1)
-               perror("send failed");
+            memset(server_buffer, 0, sizeof(server_buffer));
         }
 
     }
