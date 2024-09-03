@@ -29,12 +29,17 @@ int create_client_socket() {
         puts("Connected!");
 
         printf("> ");
+        memset(client_input, 0, sizeof(client_input));
         while(fgets(client_input, 250, stdin) != NULL) {
             if(write(client_fd, client_input, strlen(client_input)) == -1)
                 perror("send failed");
-            printf("\n");
-            printf("> ");
-            memset(client_input, 0, sizeof(client_input));
+
+            memset(server_buff, 0, sizeof(server_buff));
+//            if(read(client_fd, server_buff, sizeof(server_buff)) < 0)
+//                perror("read from server");
+//            printf("res = %s \n", server_buff);
+//            printf("\n");
+//            printf("> ");
         }
 
     }

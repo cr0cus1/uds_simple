@@ -45,16 +45,25 @@ int create_server_socket() {
         }
         puts("Connected to the client!");
 
+        memset(server_buffer, 0, sizeof(server_buffer));
         while(read(client_fd, server_buffer, sizeof(server_buffer)) > 0) {
             int first_digit = server_buffer[0] - '0';
             int second_digit = server_buffer[2] - '0';
 
-            if(server_buffer[1] == '-') 
-                printf("%d \n", first_digit-second_digit);
-            else if(server_buffer[1] == '+') 
-                printf("%d \n", first_digit+second_digit);
+            int res;
 
-            memset(server_buffer, 0, sizeof(server_buffer));
+            if(server_buffer[1] == '-') 
+                res = first_digit-second_digit;
+            else if(server_buffer[1] == '+') 
+                res = first_digit+second_digit;
+                
+
+            printf("%d \n", res);
+//            sprintf(client_buffer, "%d", res);
+//
+//            if(write(client_fd, client_buffer, sizeof(client_buffer)) < 0)
+//                perror("write");
+//
         }
 
     }
